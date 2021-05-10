@@ -1,11 +1,11 @@
 ---
-title: "The last decade of Formula 1"
+title: "The Last Decade of Formula 1"
 author: "Anurag Anand, Aadarsh Ravikumar, Maha Hussain"
-date: "1st May, 2021"
+date: "10th May, 2021"
 output:
   html_document:
-    theme: default
     code_folding: hide
+    theme: default
     toc: yes
   pdf_document:
     toc: yes
@@ -30,7 +30,7 @@ library(tidyverse)
 
 ## Abstract
 
-> In this report we utilize the World Championship data for formula 1 and use it to answer what has been the driving factor behind the decline of Ferrari's performance in the last decade. We also see how Lewis Hamilton and Sebastian Vettel fare against each other and how the team change they did at the midpoint of their career impacted their performance later on. The last element of our analysis is to put a quantitative lens on Mercedes dominance over its competitors in the past few years. This analysis presumes certain famliarity with the sport 
+> In this report we utilize the World Championship data for Formula 1 and use it to answer what has been the driving factor behind the decline of Ferrari's performance in the last decade. We also see how Lewis Hamilton and Sebastian Vettel fare against each other and how the team change that they did at the midpoint of their career impacted their performance later on. The last element of our analysis is to put a quantitative lens on Mercedes dominance over its competitors in the past few years. This analysis presumes certain famliarity with the sport, however there is glossary at the end with key terms and their definitions. 
 
 ***
 
@@ -38,11 +38,37 @@ library(tidyverse)
 
 Formula 1 (a.k.a. F1 or Formula One) is the highest class of single-seater auto racing sanctioned by the Fédération Internationale de l'Automobile (FIA) and owned by the Formula One Group. The FIA Formula One World Championship has been one of the premier forms of racing around the world since its inaugural season in 1950. The word "formula" in the name refers to the set of rules to which all participants' cars must conform. A Formula One season consists of a series of races, known as Grands Prix, which take place worldwide on purpose-built circuits and on public roads
 
+In this analysis we will primarily be looking at three aspects of the sport which are listed below:
+
+* The fall from grace of Sceuderia Ferrari (The most successfull team in the history of the sport) in the last decade
+
+* Pitch two GOATs of the sport, Lewis Hamilton and Sebastian Vettel, against each other and see how they fared against each other
+
+* A look at the Dominance of Mercedes in the Hybrid Era over its competitors
+
 ***
 
-## Data
+## Methods/Data
 
-The dataset consists of all information on the Formula 1 races, drivers, constructors, qualifying, circuits, lap times, pit stops, championships from 1950 till the latest ended 2020 season. The data is compiled from [The Ergast Developor API](http://ergast.com/mrd/)
+The datasets consists of all information on the Formula 1 races, drivers, constructors, qualifying, circuits, lap times, pit stops, and championships from 1950 till the latest completed 2020 season. The data was compiled from [The Ergast Developor API](https://urldefense.com/v3/__http://ergast.com/mrd/__;!!DZ3fjg!pZumK7hnAt8AtkP1fZxs1B43mr2ykqYNKPD2OdG64x8caQOHbcTT8lwjkbBmACVejRk$ )
+
+
+|Variable         |Description                                       |
+|-----------------|--------------------------------------------------|
+|circuitId        |racetracks differentiated by ID number (1-77)     |
+|position         |standings updated after each race                 | 
+|ConstructorRef   |company or individual which builds racing vehicles| 
+|drivers          |driver of racing vehicle                          |
+|lap_times        |time for one lap around circuit (M:S:MS)          |
+|pit_stops        |time taken to stop and refuel during race (S)     |
+|qualifying       |qualifying time (M:S)                             |
+|seasons          |URL for further information on each season        |
+|status           |driver status at end of each race                 |
+
+
+
+The data preparation steps that we will be taking in this report are aggregating, subsetting, joining and missing value treatment. There was a very large amount of data that we gathered from different sources, which made aggregating by creating visual summaries necessary. Subsetting the data was in important step which allowed us to look closer at specific variables as well as trends over time. 
+
 
 ```{r data-set-prep, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -63,22 +89,12 @@ for(i in seq(1:length(file_nm))){
 
 ## Analysis
 
-In this analysis we will primarily be looking at three aspects of the sport which are listed below:
-
-* The fall from grace of Sceuderia Ferrari (The most successfull team in the history of the sport) in the last decade
-
-* Pitch two GOATs of the sport, Lewis Hamilton and Sebastian Vettel against each other and see how they fared against each other
-
-* A look at the Dominance of Mercedes in the Hybrid Era over its competitors
-
-Lets jump right into the analysis
-
-### Why do we care about Ferrari ?
+### But why do we care about Ferrari ?
 
 ![Sceuderia Ferrari](Ferrari.jpg)
 
 
-The answer is because Ferrari has been the most successful F1 team by far in terms of number of constructor championship wins. Take a look at the chart below which highlights the number of championships won by different constructors throughout the history of the sport.
+We care because Ferrari has been the most successful F1 team by far in terms of number of constructor championship wins. Take a look at the chart below which highlights the number of championships won by different constructors throughout the history of the sport.
 
 ```{r champ_count, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -127,12 +143,11 @@ fig = fig %>% layout(yaxis = list(title = 'Championship Count'),
 # displaying the figure
 fig
 
-
 ```
 
-From the graph above we can see that Ferrari is way ahead of other teams with respect to championship counts.
+From the graph above, we can see that Ferrari is way ahead of other teams with respect to championship counts over time.
 
-Now lets take a look on who has been winning the championship in the last decade (2010-2019) vs the previous decade (1999 - 2009)
+However, let's take a look at who has been winning the most championships in the last decade (2010-2019) in comparison to the previous decade (1999 - 2009). 
 
 ```{r decade_wise_champion, echo=FALSE, message=FALSE, warning=FALSE, results='asis'}
 
@@ -163,7 +178,7 @@ knitr::kable(champion_constructor(1999, 2009), align = 'clc',caption = "Construc
 
 ```
 
-From the table above we see that a Champion team like Ferrari has not been able to win even a single championship in the last decade. If they were not able to win a championship then what was their standing in the aforementioned time period.
+From the table above, we see that a Champion team like Ferrari has not been able to win even a single championship in the last decade. If they were not able to win a championship, then what was their standing in the aforementioned earlier time period.
 
 ```{r Ferrari-standing, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -240,10 +255,11 @@ fig
 
 ```
 
-* Overlaying the points deficit information with constructor standings we see that they had 2 bad seasons early in the decade i.e. __2011 and 2014__. 
-* From 2014 onwards the Hybrid Era Began and after some initial hiccups they were able to build a very competitive car the closing the points deficit with Mercedes to a minimum of ~12%
+* Overlaying the points deficit information with constructor standings, we see that they had 2 bad seasons earlier in the decade i.e. __2011 and 2014__. 
 
-* After 2018 we see the points deficit shoot up to a huge 77% owing to the engine restrictions placed on them by the FIA
+* From 2014 onwards, the Hybrid Era began and after some initial hiccups they were able to build a very competitive car the closing the points deficit with Mercedes to a minimum of ~12%
+
+* After 2018 we see the points deficit shoot up to a huge 77%, owing to the engine restrictions placed on them by the FIA. 
 
 
 Lets now compare Ferrari's performance with the championship winning team in terms of points scored over the course of the season
@@ -347,7 +363,6 @@ fig_f
 
 ```
 
-
 __Key Findings:__
 
 * In the __2010 and 2012__ season Ferrari lost the lead early into the championship and was not able to close the gap from there on
@@ -446,7 +461,9 @@ dnf_func(2014, 2020, 6, 131)
 __Key Findings:__
 
 * From the plot above we see that Ferrari had more DNFs in __2014-2020__ than in the period __2010-2013__
+
 * We can also see a significant degree of rise in Non Accident DNFs in the period of __2014-2020__
+
 * In the __2014-2020__ period number of Non Accident DNFs has jumped from 9 to 34
 
 In racing there are several critical factors like _Optimum Tire Strategy_, _Cars Overtaking Ability_, _Spontaneous Pit Stop Decisions_, _Cars overtaking ability_ etc. Unfortunately we don't have information for that so we would be using a Proxy.
@@ -558,7 +575,7 @@ The above plots tries to grasp team's ability to finish in the podium spots when
 
 ![Sebastian Vettel and Lewis Hamilton (Left to Right)](Seb_Ham.jpg)
 
-Next we will analyze the career stats of Lewis Hamilton and Sebastian Vettel from 2010 - 2020. The reason we are looking at these two pilots is because both of them have dominated the sport in the last decade. __Vettel__ bagged all the Championships from __2010 - 2013__ and __Hamilton__ Bagged every championship from __2014 - 2020__ (with the exception of 2016 title which was clinched by Hamilton's team mate Nico Rosberg). Let's look at the overall victories for both the drivers.
+Next we will analyze the career stats of Lewis Hamilton and Sebastian Vettel from 2010 - 2020. The reason we are looking at these two pilots is because both of them have dominated the sport in the last decade. __Vettel__ won all the Championships from __2010 - 2013__ and __Hamilton__ won every championship from __2014 - 2020__ (with the exception of 2016 title which was clinched by Hamilton's team mate Nico Rosberg). Let's look at the overall victories for both the drivers.
 
 ```{r Ham-Vet-vic, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -602,7 +619,7 @@ fig
 
 ```
 
-* We can clearly see that both Hamilton and Vettel have a significant number of wins under their belt. That said Hamilton surpasses Vettel in terms of number of victories because of his sheer dominance in the hybrid era
+* We can clearly see that both Hamilton and Vettel have a significant number of wins under their belt. That said Hamilton surpasses Vettel in terms of number of victories because of his sheer dominance in the hybrid era. 
 
 Next we should look at the year - wise split of victories for both the drivers and see how each of them perform YoY.
 
@@ -641,7 +658,7 @@ __Key Highlights__:
 * We see a sharp increase in Hamilton's victory count after 2013 (Triggered by his move to Mercedes, the most dominant team in the Hybrid Era)
 
 
-In terms of victories Hamilton seems to supersede Vettel. Lets look at the overall victories and Pole positions won for both Vettel and Hamilton across teams
+In terms of victories, Hamilton seems to supersede Vettel. Lets look at the overall victories and Pole positions won for both Vettel and Hamilton across teams. 
 
 ```{r poles, echo=TRUE, message=FALSE, warning=FALSE}
 
@@ -781,7 +798,7 @@ __Key Highlights__:
 
 * The victories plot follows a similar trend to pole position chart
 
-* We see that Hamilton's Victories count skyrocketed after his move to Mercedes where as Vettels Victory growth has been quite flat
+* We see that Hamilton's Victories count skyrocketed after his move to Mercedes where as Vettel's Victory growth has been quite flat
 
 * In terms of sheer performance, Vettel's stint at Red Bull was phenomenal where he won 4 world championships
 
@@ -914,7 +931,7 @@ __Key Highlights__:
 
 * Mercedes has dominated across the board over its competitors in the Hybrid Era
 
-* Although Mercedes has been dominant with respect to clinching poles, Redbull has been able to convert non pole starts to wins in the later half of the era
+* Although Mercedes has been dominant with respect to clinching pole positions, Redbull has been able to convert non pole starts to wins in the later half of the era
 
 * This shows that Redbull's stature as a potential threat to Mercedes Dominance has been growing in the recent years 
 
@@ -926,4 +943,29 @@ __Key Highlights__:
 
 ## Appendix
 
-Place potential additional information here.
+
+### Glossary
+|Term            | Definition|
+|----------------|-----------|
+|Drivers         |Individual who drives racing cars|
+|Constructors    |Company or individual who builds racing vehicles|
+|Qualifying      |Session held before race to determine line up order at the starting line|
+|Circuits        |Racetrack for automobile races          |
+|Lap Times       |Time taken to go around the racetrack once          |
+|Pit Stops       |A pause for refuelling, repairs, adjustments, etc.      |
+|Championships   |Racetrack for automobile races          |
+|Podium Finish   |Falling in the top 3 places|
+|Pole Position   |The position at the inside of the front row at the start of a racing event|
+|Hybrid Era      |In 2014, normal engines were replaced by hybrid "power units"| 
+
+
+
+### References
+
+[Ferrari's Nightmare Decade (2010-2019)](https://urldefense.com/v3/__https://www.kaggle.com/pushkaraj/ferrari-s-nightmare-decade-2010-2019__;!!DZ3fjg!pZumK7hnAt8AtkP1fZxs1B43mr2ykqYNKPD2OdG64x8caQOHbcTT8lwjkbBmQ-o2jzw$ )
+
+[Lewis Hamilton: stats of a champion](https://urldefense.com/v3/__https://www.kaggle.com/tiagowutzke/lewis-hamilton-stats-of-a-champion__;!!DZ3fjg!pZumK7hnAt8AtkP1fZxs1B43mr2ykqYNKPD2OdG64x8caQOHbcTT8lwjkbBmrXv9F30$ )
+
+[Plotly R Open Source Graphing Library](https://urldefense.com/v3/__https://plotly.com/r/__;!!DZ3fjg!pZumK7hnAt8AtkP1fZxs1B43mr2ykqYNKPD2OdG64x8caQOHbcTT8lwjkbBmeape0wc$ )
+
+
